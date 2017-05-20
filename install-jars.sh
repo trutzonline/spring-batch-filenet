@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=[JAR] -DgroupId=[some.group] -DartifactId=[Some Id] -Dversion=1.0.0 -Dpackaging=jar

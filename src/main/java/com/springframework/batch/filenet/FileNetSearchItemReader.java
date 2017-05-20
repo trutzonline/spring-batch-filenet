@@ -1,6 +1,15 @@
 package com.springframework.batch.filenet;
 
+import com.filenet.api.collection.IndependentObjectSet;
+import com.filenet.api.core.IndependentObject;
+import com.filenet.api.core.ObjectStore;
+import com.filenet.api.property.PropertyFilter;
+import com.filenet.api.query.SearchSQL;
+import com.filenet.api.query.SearchScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.NonTransientResourceException;
+import org.springframework.batch.item.ParseException;
+import org.springframework.batch.item.UnexpectedInputException;
 
 /**
  * Copyright 2017 Christian Trutz
@@ -17,5 +26,22 @@ import org.springframework.batch.item.ItemReader;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class FileNetSearchItemReader {
+public class FileNetSearchItemReader<T extends IndependentObject> implements ItemReader<T> {
+
+    private ObjectStore objectStore;
+    private String queryString;
+    private Integer pageSize;
+    private PropertyFilter propertyFilter;
+    private Boolean continuable;
+
+    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+        return null;
+    }
+
+    private IndependentObjectSet search() {
+        SearchScope searchScope = new SearchScope(objectStore);
+        SearchSQL searchSQL = new SearchSQL(queryString);
+        return searchScope.fetchObjects(searchSQL, pageSize, propertyFilter, continuable);
+    }
+
 }

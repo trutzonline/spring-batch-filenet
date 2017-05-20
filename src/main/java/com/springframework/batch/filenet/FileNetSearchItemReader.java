@@ -1,5 +1,7 @@
 package com.springframework.batch.filenet;
 
+import org.springframework.batch.item.ItemReader;
+
 /**
  * Copyright 2017 Christian Trutz
  * <p>

@@ -1,6 +1,7 @@
 package com.springframework.batch.filenet;
 
 import com.filenet.api.collection.IndependentObjectSet;
+import com.filenet.api.collection.PageIterator;
 import com.filenet.api.core.IndependentObject;
 import com.filenet.api.core.ObjectStore;
 import com.filenet.api.property.PropertyFilter;
@@ -10,6 +11,9 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.util.Assert;
+
+import java.util.Iterator;
 
 /**
  * Copyright 2017 Christian Trutz
@@ -28,20 +32,43 @@ import org.springframework.batch.item.UnexpectedInputException;
  */
 public class FileNetSearchItemReader<T extends IndependentObject> implements ItemReader<T> {
 
-    private ObjectStore objectStore;
-    private String queryString;
-    private Integer pageSize;
-    private PropertyFilter propertyFilter;
-    private Boolean continuable;
+    private final ObjectStore objectStore;
+    private final String queryString;
+    private final Integer pageSize;
+    private final PropertyFilter propertyFilter;
+    private final Boolean continuable;
 
-    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        return null;
+    private Iterator<T> iterator = null;
+
+    public FileNetSearchItemReader(ObjectStore objectStore, String queryString) {
+        this(objectStore, queryString, null, null, null);
     }
 
-    private IndependentObjectSet search() {
+    public FileNetSearchItemReader(ObjectStore objectStore, String queryString, Integer pageSize, PropertyFilter propertyFilter, Boolean continuable) {
+        Assert.notNull(objectStore);
+        Assert.notNull(queryString);
+        this.objectStore = objectStore;
+        this.queryString = queryString;
+        this.pageSize = pageSize;
+        this.propertyFilter = propertyFilter;
+        this.continuable = continuable;
+    }
+
+    public T read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+        if (iterator == null) {
+            iterator = search();
+        }
+        if (iterator.hasNext()) {
+            return iterator.next();
+        } else {
+            return null;
+        }
+    }
+
+    private Iterator<T> search() {
         SearchScope searchScope = new SearchScope(objectStore);
         SearchSQL searchSQL = new SearchSQL(queryString);
-        return searchScope.fetchObjects(searchSQL, pageSize, propertyFilter, continuable);
+        return searchScope.fetchObjects(searchSQL, pageSize, propertyFilter, continuable).iterator();
     }
 
 }

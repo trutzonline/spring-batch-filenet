@@ -45,8 +45,6 @@ public class FileNetSearchItemReader<T extends IndependentObject> implements Ite
     }
 
     public FileNetSearchItemReader(ObjectStore objectStore, String queryString, Integer pageSize, PropertyFilter propertyFilter, Boolean continuable) {
-        Assert.notNull(objectStore);
-        Assert.notNull(queryString);
         this.objectStore = objectStore;
         this.queryString = queryString;
         this.pageSize = pageSize;
@@ -65,10 +63,11 @@ public class FileNetSearchItemReader<T extends IndependentObject> implements Ite
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Iterator<T> search() {
         SearchScope searchScope = new SearchScope(objectStore);
         SearchSQL searchSQL = new SearchSQL(queryString);
-        return searchScope.fetchObjects(searchSQL, pageSize, propertyFilter, continuable).iterator();
+        return (Iterator<T>) searchScope.fetchObjects(searchSQL, pageSize, propertyFilter, continuable).iterator();
     }
 
 }

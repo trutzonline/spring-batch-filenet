@@ -40,10 +40,21 @@ public class FileNetSearchItemReader<T extends IndependentObject> implements Ite
 
     private Iterator<T> iterator = null;
 
+    /**
+     * @param objectStore FileNet P8 Content Manager object store used
+     * @param queryString for example <code>select this from document</code>
+     */
     public FileNetSearchItemReader(ObjectStore objectStore, String queryString) {
-        this(objectStore, queryString, null, null, null);
+        this(objectStore, queryString, 1500, new PropertyFilter(), true);
     }
 
+    /**
+     * @param objectStore    FileNet P8 Content Manager object store used
+     * @param queryString    for example <code>select this from document</code>
+     * @param pageSize       the page size of the query, how many results provides the query at once, typically a query has many pages of the same page size (except the last page)
+     * @param propertyFilter the FileNet property filter used for include and exclude FileNet properties into/from result set
+     * @param continuable    if <code>true</code>, provides not only the first page
+     */
     public FileNetSearchItemReader(ObjectStore objectStore, String queryString, Integer pageSize, PropertyFilter propertyFilter, Boolean continuable) {
         this.objectStore = objectStore;
         this.queryString = queryString;
